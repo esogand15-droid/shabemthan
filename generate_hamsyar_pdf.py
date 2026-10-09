@@ -168,26 +168,25 @@ def draw_box(c, cur_y, box_type, label, lines, extra_h=0):
     c.restoreState()
     return y
 
-def draw_table(c, cur_y, headers, rows, col_widths):
+def draw_table(c, cur_y, headers, rows, col_widths, row_h=21.0, font_sz=8.8):
     c.saveState()
-    row_h = 21.0
     tbl_h = (len(rows) + 1) * row_h
     y = cur_y - 8 - tbl_h
     
     # Header row
     c.setFillColor(C_BRAND)
     c.roundRect(MARGIN_X, y + tbl_h - row_h, CONTENT_W, row_h, 4, fill=1, stroke=0)
-    c.setFont('Vazirmatn-Bold', 9.2)
+    c.setFont('Vazirmatn-Bold', font_sz + 0.2)
     c.setFillColor(C_WHITE)
     
     cur_x = MARGIN_X + CONTENT_W
     for i, h in enumerate(headers):
         w = col_widths[i]
-        c.drawRightString(cur_x - 6, y + tbl_h - row_h + 5, fa(h))
+        c.drawRightString(cur_x - 6, y + tbl_h - row_h + (row_h - font_sz)/2, fa(h))
         cur_x -= w
         
     # Rows
-    c.setFont('Vazirmatn-Regular', 9.0)
+    c.setFont('Vazirmatn-Regular', font_sz)
     for r_idx, row in enumerate(rows):
         ry = y + tbl_h - (r_idx + 2) * row_h
         if r_idx % 2 == 1:
@@ -198,12 +197,22 @@ def draw_table(c, cur_y, headers, rows, col_widths):
         for c_idx, cell in enumerate(row):
             w = col_widths[c_idx]
             if c_idx == 0:
-                c.setFont('Vazirmatn-Bold', 9.2)
+                c.setFont('Vazirmatn-Bold', font_sz)
                 c.setFillColor(C_BRAND_DARK)
             else:
-                c.setFont('Vazirmatn-Regular', 9.0)
+                c.setFont('Vazirmatn-Regular', font_sz)
                 c.setFillColor(C_TEXT_BODY)
-            c.drawRightString(cur_x - 6, ry + 5, fa(cell))
+            
+            # Smart check if cell text overflows column width
+            t_fa = fa(cell)
+            txt_w = pdfmetrics.stringWidth(t_fa, 'Vazirmatn-Regular' if c_idx > 0 else 'Vazirmatn-Bold', font_sz)
+            cell_pad = 6
+            if txt_w > w - 10:
+                # slightly smaller font if overflowing cell
+                c.setFont('Vazirmatn-Regular' if c_idx > 0 else 'Vazirmatn-Bold', font_sz - 0.7)
+                cell_pad = 3
+                
+            c.drawRightString(cur_x - cell_pad, ry + (row_h - font_sz)/2, t_fa)
             cur_x -= w
             
         # border bottom

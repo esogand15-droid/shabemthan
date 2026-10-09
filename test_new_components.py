@@ -27,10 +27,10 @@ C_LINE = HexColor('#eef0f2')
 C_WHITE = HexColor('#ffffff')
 
 BOX_STYLES = {
-    'tip': {'bg': HexColor('#fff8e6'), 'border': HexColor('#f5dea0'), 'label_c': HexColor('#9a6b00'), 'title': 'نکته طلایی', 'icon': 'build_assets/png_icons/key.png'},
-    'analogy': {'bg': HexColor('#eef5ff'), 'border': HexColor('#bcd7fb'), 'label_c': HexColor('#1d5fb8'), 'title': 'تشبیه', 'icon': 'build_assets/png_icons/target.png'},
-    'warning': {'bg': HexColor('#fff1ee'), 'border': HexColor('#f6c3b6'), 'label_c': HexColor('#c1440e'), 'title': 'دام امتحانی', 'icon': 'build_assets/png_icons/warning.png'},
-    'mnemonic': {'bg': HexColor('#f4eeff'), 'border': HexColor('#d9c6fb'), 'label_c': HexColor('#6d28d9'), 'title': 'ترفند حفظی', 'icon': 'build_assets/png_icons/bulb.png'}
+    'tip': {'bg': HexColor('#fff8e6'), 'border': HexColor('#f5dea0'), 'label_c': HexColor('#9a6b00'), 'title': 'نکته طلایی', 'icon': 'build_assets/png_icons/ref_key.png'},
+    'analogy': {'bg': HexColor('#eef5ff'), 'border': HexColor('#bcd7fb'), 'label_c': HexColor('#1d5fb8'), 'title': 'تشبیه', 'icon': 'build_assets/png_icons/ref_target.png'},
+    'warning': {'bg': HexColor('#fff1ee'), 'border': HexColor('#f6c3b6'), 'label_c': HexColor('#c1440e'), 'title': 'دام امتحانی', 'icon': 'build_assets/png_icons/ref_warning.png'},
+    'mnemonic': {'bg': HexColor('#f4eeff'), 'border': HexColor('#d9c6fb'), 'label_c': HexColor('#6d28d9'), 'title': 'ترفند حفظی', 'icon': 'build_assets/png_icons/ref_brain.png'}
 }
 
 def fa(text):
@@ -120,10 +120,10 @@ def draw_box_exact(c, cur_y, box_type, label, lines, extra_h=0):
     c.setLineWidth(0.75)
     c.roundRect(MARGIN_X, y, CONTENT_W, box_h, 6, fill=1, stroke=1)
     
-    # Draw icon on right of title
+    # Draw authentic transparent icon on right of title (80x76 ratio)
     icon_p = st['icon']
-    icon_sz = 15.0
-    c.drawImage(icon_p, MARGIN_X + CONTENT_W - 22, y + box_h - 18, width=icon_sz, height=icon_sz, mask='auto')
+    iw, ih = 15.5, 14.7
+    c.drawImage(icon_p, MARGIN_X + CONTENT_W - 23, y + box_h - 18.5, width=iw, height=ih, mask='auto')
     
     c.setFont('Vazirmatn-Bold', 9.2)
     c.setFillColor(st['label_c'])
@@ -139,6 +139,25 @@ def draw_box_exact(c, cur_y, box_type, label, lines, extra_h=0):
     c.restoreState()
     return y
 
+import math
+
+def draw_vector_star(c, cx, cy, r_outer=4.2, r_inner=1.9, color=HexColor('#ffd166')):
+    c.saveState()
+    c.setFillColor(color)
+    p = c.beginPath()
+    for i in range(10):
+        angle = math.pi / 2 + i * (math.pi / 5)
+        r = r_outer if i % 2 == 0 else r_inner
+        x = cx + r * math.cos(angle)
+        y = cy + r * math.sin(angle)
+        if i == 0:
+            p.moveTo(x, y)
+        else:
+            p.lineTo(x, y)
+    p.close()
+    c.drawPath(p, fill=1, stroke=0)
+    c.restoreState()
+
 def draw_summary_box_exact(c, cur_y, title_fa, bullet_lines):
     c.saveState()
     box_h = 26 + len(bullet_lines) * 15.0
@@ -146,21 +165,21 @@ def draw_summary_box_exact(c, cur_y, title_fa, bullet_lines):
     c.setFillColor(C_BRAND_DARK)
     c.roundRect(MARGIN_X, y, CONTENT_W, box_h, 7, fill=1, stroke=0)
     
-    # Icon pin
-    c.drawImage('build_assets/png_icons/perfect_pin.png', MARGIN_X + CONTENT_W - 26, y + box_h - 22, width=18, height=18)
+    # Authentic pin icon on right of title (80x76 ratio)
+    c.drawImage('build_assets/png_icons/ref_pin.png', MARGIN_X + CONTENT_W - 26, y + box_h - 22, width=17, height=16.15, mask='auto')
     
     c.setFont('Vazirmatn-ExtraBold', 10.0)
     c.setFillColor(C_WHITE)
-    c.drawRightString(MARGIN_X + CONTENT_W - 30, y + box_h - 17, fa(f"جمع‌بندی فصل در یک نگاه"))
+    c.drawRightString(MARGIN_X + CONTENT_W - 31, y + box_h - 17, fa("جمع‌بندی فصل در یک نگاه"))
     
     c.setFont('Vazirmatn-Regular', 8.8)
     c.setFillColor(C_WHITE)
     ty = y + box_h - 19
     for line in bullet_lines:
         ty -= 15.0
-        # Draw small star
-        c.drawImage('build_assets/png_icons/perfect_star.png', MARGIN_X + CONTENT_W - 19, ty + 1.0, width=13, height=13)
-        c.drawRightString(MARGIN_X + CONTENT_W - 28, ty, fa(line))
+        # Complete, sharp, beautiful 5-pointed gold star
+        draw_vector_star(c, MARGIN_X + CONTENT_W - 13.5, ty + 3.0, r_outer=3.8, r_inner=1.7, color=HexColor('#ffd166'))
+        c.drawRightString(MARGIN_X + CONTENT_W - 22, ty, fa(line))
         
     c.restoreState()
     return y
