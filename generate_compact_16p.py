@@ -55,26 +55,40 @@ c.drawRightString(PAGE_W - MARGIN_X, PAGE_H - 250, fa("خلاصه فوق‌فش�
 c.drawRightString(PAGE_W - MARGIN_X, PAGE_H - 270, fa("ویژه جمع‌بندی سریع آزمون‌های پایان‌ترم و جامع علوم پایه پزشکی"))
 
 pills = [
-    ("۱۲ فصل کامل آموزشی (هر فصل در ۱ صفحه)", "build_assets/png_icons/badge_spiral.png"),
-    ("نکات کلیدی و دام‌های تستی", "build_assets/png_icons/warning.png"),
-    ("تشبیه‌های مفهومی و بالینی", "build_assets/png_icons/target.png"),
-    ("جداول مقایسه‌ای و فرمول‌ها", "build_assets/png_icons/badge_timer.png")
+    ("۱۲ فصل کامل آموزشی (هر فصل در ۱ صفحه)", "✓", HexColor('#10b981')),
+    ("نکات کلیدی و دام‌های تستی امتحانی", "!", HexColor('#f59e0b')),
+    ("تشبیه‌های مفهومی و کاربردهای بالینی", "★", HexColor('#3b82f6')),
+    ("جداول مقایسه‌ای و فرمول‌های طلایی", "≡", HexColor('#8b5cf6'))
 ]
 pill_y = PAGE_H - 330
-for idx, (p_text, p_icon) in enumerate(pills):
+for idx, (p_text, p_sym, p_color) in enumerate(pills):
     px = MARGIN_X + (idx % 2) * 270
-    py = pill_y - (idx // 2) * 40
-    c.setFillColorRGB(1, 1, 1, 0.15)
-    c.roundRect(px, py, 250, 30, 15, fill=1, stroke=0)
-    c.drawImage(p_icon, px + 224, py + 7, width=16, height=16, mask='auto')
+    py = pill_y - (idx // 2) * 46
+    
+    # Pill surface
+    c.setFillColorRGB(1, 1, 1, 0.12)
+    c.setStrokeColorRGB(1, 1, 1, 0.35)
+    c.setLineWidth(1)
+    c.roundRect(px, py, 254, 34, 17, fill=1, stroke=1)
+    
+    # Solid colored circle on right
+    c.setFillColor(p_color)
+    c.circle(px + 236, py + 17, 10.5, fill=1, stroke=0)
+    
+    # Symbol inside circle
+    c.setFont('DejaVuSans', 10.5)
+    c.setFillColor(C_WHITE)
+    c.drawCentredString(px + 236, py + 13.5, p_sym)
+    
+    # Text
     c.setFillColor(C_WHITE)
     c.setFont('Vazirmatn-Bold', 9.2)
-    c.drawRightString(px + 218, py + 9, fa(p_text))
+    c.drawRightString(px + 218, py + 11.5, fa(p_text))
 
 c.setFont('Vazirmatn-Regular', 9.0)
 c.setFillColorRGB(0.85, 0.9, 0.95)
 c.drawRightString(PAGE_W - MARGIN_X, 80, fa("منطبق بر مراجع رسمی بیوشیمی پزشکی (Lehninger & Harper)"))
-c.drawRightString(PAGE_W - MARGIN_X, 60, fa("humsyar • خلاصه جامع بیوشیمی پزشکی"))
+c.drawRightString(PAGE_W - MARGIN_X, 60, fa("humsyar • جزوه طلایی شب امتحان"))
 c.restoreState()
 c.showPage()
 
@@ -88,20 +102,20 @@ c.setFillColor(C_TEXT_MUTED)
 c.drawRightString(PAGE_W - MARGIN_X, PAGE_H - 68, fa("راهنمای دسترسی سریع به ۱۲ فصل آموزشی (هر فصل دقیقاً در یک صفحه) و جمع‌بندی نهایی"))
 
 cards = [
-    ("فصل اول", "شناخت بیوشیمی و سازمان‌یابی سلولی", "ص ۳", "build_assets/png_icons/badge_droplet.png"),
-    ("فصل دوم", "آب، pH و سیستم‌های بافری فیزیولوژیک", "ص ۴", "build_assets/png_icons/badge_droplet.png"),
-    ("فصل سوم", "کربوهیدرات‌ها ۱: ساختار و ایزومری", "ص ۵", "build_assets/png_icons/badge_brick.png"),
-    ("فصل چهارم", "کربوهیدرات‌ها ۲: واکنش‌ها و پلی‌ساکاریدها", "ص ۶", "build_assets/png_icons/badge_wave.png"),
-    ("فصل پنجم", "اسیدهای آمینه و خواص یونی", "ص ۷", "build_assets/png_icons/badge_lightning.png"),
-    ("فصل ششم", "سطوح ساختاری پروتئین‌ها و واسرشتگی", "ص ۸", "build_assets/png_icons/badge_lightning.png"),
-    ("فصل هفتم", "هموپروتئین‌ها، میوگلوبین و هموگلوبین", "ص ۹", "build_assets/png_icons/badge_battery.png"),
-    ("فصل هشتم", "شیمی و ساختار اسیدهای نوکلئیک", "ص ۱۰", "build_assets/png_icons/badge_action.png"),
-    ("فصل نهم", "سازوکار و آنزیم‌های همانندسازی DNA", "ص ۱۱", "build_assets/png_icons/badge_action.png"),
-    ("فصل دهم", "شیمی، ساختار و طبقه‌بندی لیپیدها", "ص ۱۲", "build_assets/png_icons/badge_speed.png"),
-    ("فصل یازدهم", "آنزیم‌ها و سینتیک کاتالیز زیستی", "ص ۱۳", "build_assets/png_icons/badge_link.png"),
-    ("فصل دوازدهم", "ویتامین‌های محلول در چربی و آب", "ص ۱۴", "build_assets/png_icons/badge_muscle.png"),
-    ("جمع‌بندی ۱", "کل درس بیوشیمی در یک نگاه مقایسه‌ای", "ص ۱۵", "build_assets/png_icons/badge_timer.png"),
-    ("جمع‌بندی ۲", "کلید طلایی اعداد، ثابت‌ها و خودآزمایی", "ص ۱۶", "build_assets/png_icons/badge_spiral.png")
+    ("فصل اول", "شناخت بیوشیمی و سازمان‌یابی سلولی", "ص ۳", "build_assets/png_icons/droplet.png"),
+    ("فصل دوم", "آب، pH و سیستم‌های بافری فیزیولوژیک", "ص ۴", "build_assets/png_icons/droplet.png"),
+    ("فصل سوم", "کربوهیدرات‌ها ۱: ساختار و ایزومری", "ص ۵", "build_assets/png_icons/sugar.png"),
+    ("فصل چهارم", "کربوهیدرات‌ها ۲: واکنش‌ها و پلی‌ساکاریدها", "ص ۶", "build_assets/png_icons/bread.png"),
+    ("فصل پنجم", "اسیدهای آمینه و خواص یونی", "ص ۷", "build_assets/png_icons/meat.png"),
+    ("فصل ششم", "سطوح ساختاری پروتئین‌ها و واسرشتگی", "ص ۸", "build_assets/png_icons/meat.png"),
+    ("فصل هفتم", "هموپروتئین‌ها، میوگلوبین و هموگلوبین", "ص ۹", "build_assets/png_icons/blood.png"),
+    ("فصل هشتم", "شیمی و ساختار اسیدهای نوکلئیک", "ص ۱۰", "build_assets/png_icons/dna.png"),
+    ("فصل نهم", "سازوکار و آنزیم‌های همانندسازی DNA", "ص ۱۱", "build_assets/png_icons/dna.png"),
+    ("فصل دهم", "شیمی، ساختار و طبقه‌بندی لیپیدها", "ص ۱۲", "build_assets/png_icons/oil.png"),
+    ("فصل یازدهم", "آنزیم‌ها و سینتیک کاتالیز زیستی", "ص ۱۳", "build_assets/png_icons/lightning.png"),
+    ("فصل دوازدهم", "ویتامین‌های محلول در چربی و آب", "ص ۱۴", "build_assets/png_icons/pill.png"),
+    ("جمع‌بندی ۱", "کل درس بیوشیمی در یک نگاه مقایسه‌ای", "ص ۱۵", "build_assets/png_icons/chart.png"),
+    ("جمع‌بندی ۲", "کلید طلایی اعداد، ثابت‌ها و خودآزمایی", "ص ۱۶", "build_assets/png_icons/checklist.png")
 ]
 
 card_w = 255.0
@@ -141,7 +155,7 @@ c.restoreState()
 c.showPage()
 
 # ================= PAGE 3: CHAPTER 1 =================
-cur_y = draw_header_exact(c, "فصل ۱", "شناخت بیوشیمی و سازمان‌یابی سلولی", "مبانی بیوشیمی پزشکی، تفاوت با شیمی آلی و آسیب‌های سلولی", "build_assets/png_icons/badge_droplet.png")
+cur_y = draw_header_exact(c, "فصل ۱", "شناخت بیوشیمی و سازمان‌یابی سلولی", "مبانی بیوشیمی پزشکی، تفاوت با شیمی آلی و آسیب‌های سلولی", "build_assets/png_icons/droplet.png")
 cur_y = draw_lead(c, cur_y, [
     "بیوشیمی زبان مشترک تمامی علوم پزشکی است که پدیده‌های فیزیولوژیک و پاتولوژیک را در سطح اتم‌ها و مولکول‌ها توصیف می‌کند.",
     "سلول کوچک‌ترین واحدی است که تمام مشخصات مستقل حیات (متابولیسم، تولیدمثل، پاسخ به محرک) را نشان می‌دهد."
@@ -175,7 +189,7 @@ draw_footer_clean(c, 3)
 c.showPage()
 
 # ================= PAGE 4: CHAPTER 2 =================
-cur_y = draw_header_exact(c, "فصل ۲", "آب، pH و سیستم‌های بافری فیزیولوژیک", "پیوند هیدروژنی، هندرسون–هسلباخ، بافرهای بی‌کربنات و فسفات", "build_assets/png_icons/badge_droplet.png")
+cur_y = draw_header_exact(c, "فصل ۲", "آب، pH و سیستم‌های بافری فیزیولوژیک", "پیوند هیدروژنی، هندرسون–هسلباخ، بافرهای بی‌کربنات و فسفات", "build_assets/png_icons/droplet.png")
 cur_y = draw_lead(c, cur_y, [
     "آب بستر اصلی تمام واکنش‌های بیوشیمیایی است و حدود ۶۰٪ وزن بدن فرد بالغ را تشکیل می‌دهد.",
     "ثابت دی‌الکتریک بالای آب (۷۸.۵) جاذبه بین یون‌ها را کاهش داده و انحلال نمک‌ها و بارهای زیستی را امکان‌پذیر می‌سازد."
@@ -209,7 +223,7 @@ draw_footer_clean(c, 4)
 c.showPage()
 
 # ================= PAGE 5: CHAPTER 3 =================
-cur_y = draw_header_exact(c, "فصل ۳", "کربوهیدرات‌ها ۱: ساختار، ایزومری و مشتقات", "آلدوزها، کتوزها، کربن کایرال، اپی‌مرها، آنومرها و قندهای اسیدی", "build_assets/png_icons/badge_brick.png")
+cur_y = draw_header_exact(c, "فصل ۳", "کربوهیدرات‌ها ۱: ساختار، ایزومری و مشتقات", "آلدوزها، کتوزها، کربن کایرال، اپی‌مرها، آنومرها و قندهای اسیدی", "build_assets/png_icons/sugar.png")
 cur_y = draw_lead(c, cur_y, [
     "مونوساکاریدها واحدهای سازنده کربوهیدرات‌ها هستند و بر مبنای عامل کربونیل به آلدوزها و کتوزها رده‌بندی می‌شوند.",
     "ایزومرهای فضایی نقش تعیین‌کننده‌ای در شناسایی آنزیمی و مسیرهای کاتابولیک و آنابولیک ایفا می‌کنند."
@@ -243,7 +257,7 @@ draw_footer_clean(c, 5)
 c.showPage()
 
 # ================= PAGE 6: CHAPTER 4 =================
-cur_y = draw_header_exact(c, "فصل ۴", "کربوهیدرات‌ها ۲: دی‌ساکاریدها و پلی‌ساکاریدها", "مالتوز، لاکتوز، ساکارز، نشاسته، گلیکوژن، سلولز و هپارین", "build_assets/png_icons/badge_wave.png")
+cur_y = draw_header_exact(c, "فصل ۴", "کربوهیدرات‌ها ۲: دی‌ساکاریدها و پلی‌ساکاریدها", "مالتوز، لاکتوز، ساکارز، نشاسته، گلیکوژن، سلولز و هپارین", "build_assets/png_icons/bread.png")
 cur_y = draw_lead(c, cur_y, [
     "پیوند گلیکوزیدی اتصال کووالانسی کربن آنومریک یک قند با هیدروکسیل قند دیگر است.",
     "قفل شدن هر دو کربن آنومریک در ساکارز موجب نامحلول ماندن در واکنش احیای مس و از بین رفتن خاصیت احیاکنندگی می‌شود."
@@ -275,7 +289,7 @@ draw_footer_clean(c, 6)
 c.showPage()
 
 # ================= PAGE 7: CHAPTER 5 =================
-cur_y = draw_header_exact(c, "فصل ۵", "اسیدهای آمینه و خواص یونی", "ساختار، رده‌بندی، تیتراسیون زوئیتربون، نقطه pI و جدول مقادیر pKa", "build_assets/png_icons/badge_lightning.png")
+cur_y = draw_header_exact(c, "فصل ۵", "اسیدهای آمینه و خواص یونی", "ساختار، رده‌بندی، تیتراسیون زوئیتربون، نقطه pI و جدول مقادیر pKa", "build_assets/png_icons/meat.png")
 cur_y = draw_lead(c, cur_y, [
     "اسیدهای آمینه بلوک‌های سازنده پروتئین‌ها هستند و همگی از نوع L-α می‌باشند.",
     "در pH فیزیولوژیک اسیدهای آمینه به فرم یون دوقطبی با بار خالص صفر (Zwitterion) حضور دارند."
@@ -311,7 +325,7 @@ draw_footer_clean(c, 7)
 c.showPage()
 
 # ================= PAGE 8: CHAPTER 6 =================
-cur_y = draw_header_exact(c, "فصل ۶", "سطوح ساختاری پروتئین‌ها و واسرشتگی", "پیوند پپتیدی، مارپیچ آلفا، صفحات بتا، نیروهای پایدارکننده و تخریب ادمن", "build_assets/png_icons/badge_lightning.png")
+cur_y = draw_header_exact(c, "فصل ۶", "سطوح ساختاری پروتئین‌ها و واسرشتگی", "پیوند پپتیدی، مارپیچ آلفا، صفحات بتا، نیروهای پایدارکننده و تخریب ادمن", "build_assets/png_icons/meat.png")
 cur_y = draw_lead(c, cur_y, [
     "پیوند پپتیدی پیوندی آمیدی، مسطح و صلب با ۴۰٪ خصلت پیوند دوگانه جزئی است که چرخش حول C-N را ناممکن می‌سازد.",
     "کنفورماسیون ترانس به دلیل ممانعت فضایی گروه‌های R غالب است و چرخش پروتئین منحصراً حول زوایای φ و ψ صورت می‌گیرد."
@@ -343,7 +357,7 @@ draw_footer_clean(c, 8)
 c.showPage()
 
 # ================= PAGE 9: CHAPTER 7 =================
-cur_y = draw_header_exact(c, "فصل ۷", "هموپروتئین‌ها، میوگلوبین و هموگلوبین", "حلقه پورفیرین، حالت‌های T و R، اثر بور، تنظیم 2,3-BPG و کم‌خونی داسی‌شکل", "build_assets/png_icons/badge_battery.png")
+cur_y = draw_header_exact(c, "فصل ۷", "هموپروتئین‌ها، میوگلوبین و هموگلوبین", "حلقه پورفیرین، حالت‌های T و R، اثر بور، تنظیم 2,3-BPG و کم‌خونی داسی‌شکل", "build_assets/png_icons/blood.png")
 cur_y = draw_lead(c, cur_y, [
     "هموپروتئین‌ها حامل گروه پروستتیک «هم» (پروتوپورفیرین IX همراه با یون Fe2+) هستند.",
     "هیستیدین پروگزیمال (F8) مستقیماً به آهن متصل است و هیستیدین دیستال (E7) مانع از اتصال خطی و مسمومیت کشنده CO می‌شود."
@@ -374,7 +388,7 @@ draw_footer_clean(c, 9)
 c.showPage()
 
 # ================= PAGE 10: CHAPTER 8 =================
-cur_y = draw_header_exact(c, "فصل ۸", "شیمی و سازمان‌یابی اسیدهای نوکلئیک", "پورین، پیریمیدین، پیوند فسفودی‌استر، مارپیچ B-DNA و انواع RNA", "build_assets/png_icons/badge_action.png")
+cur_y = draw_header_exact(c, "فصل ۸", "شیمی و سازمان‌یابی اسیدهای نوکلئیک", "پورین، پیریمیدین، پیوند فسفودی‌استر، مارپیچ B-DNA و انواع RNA", "build_assets/png_icons/dna.png")
 cur_y = draw_lead(c, cur_y, [
     "نوکلئوتیدها واحدهای ساختمانی اسیدهای نوکلئیک شامل باز نیتروژنی، قند پنتوز و ۱ تا ۳ گروه فسفات هستند.",
     "پیوند فسفودی‌استر انتهای ۳'-OH یک قند را به ۵'-فسفات قند بعدی وصل کرده و اسکلت قطبی را می‌سازد."
@@ -406,7 +420,7 @@ draw_footer_clean(c, 10)
 c.showPage()
 
 # ================= PAGE 11: CHAPTER 9 =================
-cur_y = draw_header_exact(c, "فصل ۹", "سازوکار و آنزیم‌های همانندسازی DNA", "آزمایش مزلسون–استال، پلیمرازها، قطعات اکازاکی، تصحیح خطا و تلومراز", "build_assets/png_icons/badge_action.png")
+cur_y = draw_header_exact(c, "فصل ۹", "سازوکار و آنزیم‌های همانندسازی DNA", "آزمایش مزلسون–استال، پلیمرازها، قطعات اکازاکی، تصحیح خطا و تلومراز", "build_assets/png_icons/dna.png")
 cur_y = draw_lead(c, cur_y, [
     "همانندسازی به صورت نیمه‌حفاظتی (اثبات با 15N/14N مزلسون–استال)، دوجهتی و در جهت انحصاری ۵' به ۳' انجام می‌شود.",
     "پلیمرازها برای شروع نیازمند پرایمر RNA هستند و هم‌زمان سنتز در رشته پیشرو (پیوسته) و پیرو (اکازاکی) پیش می‌رود."
@@ -439,7 +453,7 @@ draw_footer_clean(c, 11)
 c.showPage()
 
 # ================= PAGE 12: CHAPTER 10 =================
-cur_y = draw_header_exact(c, "فصل ۱۰", "شیمی، ساختار و طبقه‌بندی لیپیدها", "اسیدهای چرب سیس/ترانس، فسفوگلیسریدها، فسفولیپازها و لیپوپروتئین‌ها", "build_assets/png_icons/badge_speed.png")
+cur_y = draw_header_exact(c, "فصل ۱۰", "شیمی، ساختار و طبقه‌بندی لیپیدها", "اسیدهای چرب سیس/ترانس، فسفوگلیسریدها، فسفولیپازها و لیپوپروتئین‌ها", "build_assets/png_icons/oil.png")
 cur_y = draw_lead(c, cur_y, [
     "لیپیدها ترکیبات آبگریز نامحلول در آب هستند و اسیدهای چرب بلوک‌های اصلی ساختمانی آنها به شمار می‌روند.",
     "پیوندهای دوگانه در اسیدهای چرب طبیعی تقریباً همیشه کنفورماسیون سیس با زاویه ۱۲۰ درجه دارند که سیالیت غشا را حفظ می‌کند."
@@ -471,7 +485,7 @@ draw_footer_clean(c, 12)
 c.showPage()
 
 # ================= PAGE 13: CHAPTER 11 =================
-cur_y = draw_header_exact(c, "فصل ۱۱", "آنزیم‌ها و سینتیک کاتالیز زیستی", "کلاس‌های ۶‌گانه EC، فیت القایی، معادله میکائیلیس و مهارکننده‌ها", "build_assets/png_icons/badge_link.png")
+cur_y = draw_header_exact(c, "فصل ۱۱", "آنزیم‌ها و سینتیک کاتالیز زیستی", "کلاس‌های ۶‌گانه EC، فیت القایی، معادله میکائیلیس و مهارکننده‌ها", "build_assets/png_icons/lightning.png")
 cur_y = draw_lead(c, cur_y, [
     "آنزیم‌ها با تثبیت حالت گذار و کاهش انرژی فعال‌سازی (Ea) سرعت واکنش‌ها را تا ۱۰^۱۲ برابر افزایش می‌دهند.",
     "آنزیم‌ها تغییری در تعادل شیمیایی (Keq) یا انرژی آزاد گیبس (ΔG) ایجاد نمی‌کنند."
@@ -506,7 +520,7 @@ draw_footer_clean(c, 13)
 c.showPage()
 
 # ================= PAGE 14: CHAPTER 12 =================
-cur_y = draw_header_exact(c, "فصل ۱۲", "ویتامین‌های محلول در چربی و آب", "کوآنزیم‌ها، متابولیسم فعال، نقش بیوشیمیایی و سندرم‌های بالینی کمبود", "build_assets/png_icons/badge_muscle.png")
+cur_y = draw_header_exact(c, "فصل ۱۲", "ویتامین‌های محلول در چربی و آب", "کوآنزیم‌ها، متابولیسم فعال، نقش بیوشیمیایی و سندرم‌های بالینی کمبود", "build_assets/png_icons/pill.png")
 cur_y = draw_lead(c, cur_y, [
     "ویتامین‌ها ترکیبات آلی ضروری غذایی هستند که در بدن سنتز نشده و به عنوان پیش‌ساز کوآنزیم‌ها یا تنظیم‌کننده رونویسی عمل می‌کنند.",
     "ویتامین‌های محلول در چربی (A, D, E, K) قابلیت ذخیره‌سازی داشته و مازاد آنها موجب سمیت می‌شود؛ مازاد ویتامین‌های آب دفع ادراری می‌گردد."
@@ -537,7 +551,7 @@ draw_footer_clean(c, 14)
 c.showPage()
 
 # ================= PAGE 15: SUMMARY TABLE =================
-cur_y = draw_header_exact(c, "جمع‌بندی ۱", "کل درس بیوشیمی پزشکی در یک نگاه مقایسه‌ای", "مرور جامع و فوق‌سریع مفاهیم بنیادین تمامی ۱۲ فصل در یک جدول طلایی", "build_assets/png_icons/badge_timer.png")
+cur_y = draw_header_exact(c, "جمع‌بندی ۱", "کل درس بیوشیمی پزشکی در یک نگاه مقایسه‌ای", "مرور جامع و فوق‌سریع مفاهیم بنیادین تمامی ۱۲ فصل در یک جدول طلایی", "build_assets/png_icons/chart.png")
 
 table_headers = ["فصل", "مهم‌ترین سازوکار بیوشیمیایی", "نکته تست‌خیز امتحانی", "ارتباط بالینی و آزمایشگاهی"]
 table_rows = [
@@ -565,7 +579,7 @@ draw_footer_clean(c, 15)
 c.showPage()
 
 # ================= PAGE 16: KEY NUMBERS & QA CHECKLIST =================
-cur_y = draw_header_exact(c, "جمع‌بندی ۲", "کلید اعداد، فرمول‌های حیاتی و خودآزمایی", "جدول اعداد و ثابت‌های طلایی به همراه چک‌لیست ۱۰ گام مرور سریع شب امتحانی", "build_assets/png_icons/badge_spiral.png")
+cur_y = draw_header_exact(c, "جمع‌بندی ۲", "کلید اعداد، فرمول‌های حیاتی و خودآزمایی", "جدول اعداد و ثابت‌های طلایی به همراه چک‌لیست ۱۰ گام مرور سریع شب امتحانی", "build_assets/png_icons/checklist.png")
 
 cur_y = draw_section_title(c, cur_y, "اعداد و ثابت‌های طلایی بیوشیمی پزشکی")
 table_headers = ["کمیت / ثابت بیوشیمیایی", "مقدار عددی دقیق", "واحد اندازه‌گیری", "اهمیت و کاربرد در محاسبات"]

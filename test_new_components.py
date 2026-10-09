@@ -65,14 +65,23 @@ def draw_header_exact(c, chapter_pill_str, title_fa, subtitle_fa, icon_png_path)
     c.restoreState()
     
     c.saveState()
-    # 2. Icon badge on right (exact 40x40 from reference)
-    badge_w = 40.0
-    badge_h = 40.0
-    badge_x = MARGIN_X + CONTENT_W - badge_w - 13.5
+    # 2. Icon badge on right: matching green background pill + vivid icon
+    badge_w = 42.0
+    badge_h = 42.0
+    badge_x = MARGIN_X + CONTENT_W - badge_w - 12.0
     badge_y = bar_y + (bar_h - badge_h) / 2
     
+    # Matching green background slightly lighter/darker
+    c.setFillColor(HexColor('#0d8a5c'))
+    c.setStrokeColor(HexColor('#19c27e'))
+    c.setLineWidth(1.2)
+    c.roundRect(badge_x, badge_y, badge_w, badge_h, 8, fill=1, stroke=1)
+    
     if icon_png_path:
-        c.drawImage(icon_png_path, badge_x, badge_y, width=badge_w, height=badge_h)
+        icon_sz = 26.0
+        ix = badge_x + (badge_w - icon_sz) / 2
+        iy = badge_y + (badge_h - icon_sz) / 2
+        c.drawImage(icon_png_path, ix, iy, width=icon_sz, height=icon_sz, mask='auto')
         
     # 3. Chapter Pill (e.g. "فصل ۱")
     pill_w = 42.0
@@ -160,20 +169,23 @@ print("New exact components defined successfully!")
 
 def draw_footer_clean(c, page_num):
     c.saveState()
-    y = 20.0
-    c.setStrokeColor(C_LINE)
-    c.setLineWidth(0.5)
+    y = 16.0
+    # Clean subtle divider line
+    c.setStrokeColor(HexColor('#e2e8f0'))
+    c.setLineWidth(0.6)
     c.line(MARGIN_X, y + 14, MARGIN_X + CONTENT_W, y + 14)
     
-    # Left: humsyar brand
-    c.setFont('LiberationSans-Bold', 8.5)
-    c.setFillColor(C_BRAND)
-    c.drawString(MARGIN_X, y + 2, "humsyar")
+    # Left: stylish humsyar brand badge
+    c.setFillColor(HexColor('#0c7a52'))
+    c.roundRect(MARGIN_X, y + 1, 52, 13, 3, fill=1, stroke=0)
+    c.setFont('LiberationSans-Bold', 7.5)
+    c.setFillColor(C_WHITE)
+    c.drawCentredString(MARGIN_X + 26, y + 3.5, "humsyar")
     
-    # Right: Page number in Persian
-    c.setFont('Vazirmatn-Medium', 8.5)
-    c.setFillColor(C_TEXT_MUTED)
+    # Right: Elegant Persian page number
+    c.setFont('Vazirmatn-Bold', 8.5)
+    c.setFillColor(HexColor('#64748b'))
     p_text = fa(f"صفحه {page_num}")
-    c.drawRightString(MARGIN_X + CONTENT_W, y + 2, p_text)
+    c.drawRightString(MARGIN_X + CONTENT_W, y + 2.5, p_text)
     c.restoreState()
 
