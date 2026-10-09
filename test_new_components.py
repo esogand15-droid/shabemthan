@@ -65,22 +65,14 @@ def draw_header_exact(c, chapter_pill_str, title_fa, subtitle_fa, icon_png_path)
     c.restoreState()
     
     c.saveState()
-    # 2. Semi-transparent white icon square on right
+    # 2. Icon badge on right (exact 40x40 from reference)
     badge_w = 40.0
     badge_h = 40.0
     badge_x = MARGIN_X + CONTENT_W - badge_w - 13.5
     badge_y = bar_y + (bar_h - badge_h) / 2
     
-    # fill with white opacity 0.2
-    c.setFillColorRGB(1, 1, 1, 0.22)
-    c.roundRect(badge_x, badge_y, badge_w, badge_h, 8, fill=1, stroke=0)
-    
-    # Draw icon image inside
     if icon_png_path:
-        img_size = 24.0
-        ix = badge_x + (badge_w - img_size) / 2
-        iy = badge_y + (badge_h - img_size) / 2
-        c.drawImage(icon_png_path, ix, iy, width=img_size, height=img_size, mask='auto')
+        c.drawImage(icon_png_path, badge_x, badge_y, width=badge_w, height=badge_h)
         
     # 3. Chapter Pill (e.g. "فصل ۱")
     pill_w = 42.0
@@ -121,8 +113,8 @@ def draw_box_exact(c, cur_y, box_type, label, lines, extra_h=0):
     
     # Draw icon on right of title
     icon_p = st['icon']
-    icon_sz = 14.0
-    c.drawImage(icon_p, MARGIN_X + CONTENT_W - 24, y + box_h - 18, width=icon_sz, height=icon_sz, mask='auto')
+    icon_sz = 15.0
+    c.drawImage(icon_p, MARGIN_X + CONTENT_W - 22, y + box_h - 18, width=icon_sz, height=icon_sz, mask='auto')
     
     c.setFont('Vazirmatn-Bold', 9.2)
     c.setFillColor(st['label_c'])
@@ -146,7 +138,7 @@ def draw_summary_box_exact(c, cur_y, title_fa, bullet_lines):
     c.roundRect(MARGIN_X, y, CONTENT_W, box_h, 7, fill=1, stroke=0)
     
     # Icon pin
-    c.drawImage('build_assets/png_icons/pin.png', MARGIN_X + CONTENT_W - 24, y + box_h - 20, width=15, height=15, mask='auto')
+    c.drawImage('build_assets/png_icons/perfect_pin.png', MARGIN_X + CONTENT_W - 26, y + box_h - 22, width=18, height=18)
     
     c.setFont('Vazirmatn-ExtraBold', 10.0)
     c.setFillColor(C_WHITE)
@@ -158,10 +150,30 @@ def draw_summary_box_exact(c, cur_y, title_fa, bullet_lines):
     for line in bullet_lines:
         ty -= 15.0
         # Draw small star
-        c.drawImage('build_assets/png_icons/star.png', MARGIN_X + CONTENT_W - 22, ty + 1, width=10, height=10, mask='auto')
+        c.drawImage('build_assets/png_icons/perfect_star.png', MARGIN_X + CONTENT_W - 19, ty + 1.0, width=13, height=13)
         c.drawRightString(MARGIN_X + CONTENT_W - 28, ty, fa(line))
         
     c.restoreState()
     return y
 
 print("New exact components defined successfully!")
+
+def draw_footer_clean(c, page_num):
+    c.saveState()
+    y = 20.0
+    c.setStrokeColor(C_LINE)
+    c.setLineWidth(0.5)
+    c.line(MARGIN_X, y + 14, MARGIN_X + CONTENT_W, y + 14)
+    
+    # Left: humsyar brand
+    c.setFont('LiberationSans-Bold', 8.5)
+    c.setFillColor(C_BRAND)
+    c.drawString(MARGIN_X, y + 2, "humsyar")
+    
+    # Right: Page number in Persian
+    c.setFont('Vazirmatn-Medium', 8.5)
+    c.setFillColor(C_TEXT_MUTED)
+    p_text = fa(f"صفحه {page_num}")
+    c.drawRightString(MARGIN_X + CONTENT_W, y + 2, p_text)
+    c.restoreState()
+
