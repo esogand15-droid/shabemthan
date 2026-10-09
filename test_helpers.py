@@ -273,3 +273,66 @@ def draw_flow_diagram(c, cur_y, steps, title_fa=None, box_h=35, margin_x=34, con
     return box_y - 8
 
 print("test_helpers.py successfully updated with vector badges and clean multiline tables!")
+
+
+def draw_key_card(c, cur_y, title_fa, items, card_type="formula", margin_x=34, content_w=528.8):
+    """
+    Renders an exam-oriented stylized card with:
+    - card_type: 'formula' (blue/indigo), 'trap' (amber/warning), 'rule' (emerald/teal), 'clinical' (rose/red)
+    - title with badge
+    - bullet items wrapped safely within card boundaries (NO OVERFLOW)
+    """
+    from reportlab.lib.colors import HexColor
+    from test_new_components import fa
+    c.saveState()
+    
+    styles = {
+        'formula': {'bg': HexColor('#f0f9ff'), 'border': HexColor('#0284c7'), 'title': HexColor('#0369a1'), 'badge': 'فرمول و رابطه کلیدی'},
+        'trap': {'bg': HexColor('#fffbeb'), 'border': HexColor('#f59e0b'), 'title': HexColor('#b45309'), 'badge': 'دام تستی و هشدار امتحانی'},
+        'rule': {'bg': HexColor('#f0fdf4'), 'border': HexColor('#16a34a'), 'title': HexColor('#15803d'), 'badge': 'قاعده طلایی و قانون بیوشیمی'},
+        'clinical': {'bg': HexColor('#fff1f2'), 'border': HexColor('#e11d48'), 'title': HexColor('#be123c'), 'badge': 'نکته بالینی و پاتولوژی'}
+    }
+    st = styles.get(card_type, styles['rule'])
+    
+    # Wrap all items
+    wrapped_lines = []
+    for item in items:
+        # Check if item has bold label: "Label: rest of text"
+        lines = wrap_persian_text("• " + item, "Vazirmatn-Regular", 7.8, content_w - 24)
+        wrapped_lines.extend(lines)
+        
+    line_h = 12.5
+    card_h = 24 + len(wrapped_lines) * line_h + 6
+    y = cur_y - 6 - card_h
+    
+    # Outer card
+    c.setFillColor(st['bg'])
+    c.setStrokeColor(st['border'])
+    c.setLineWidth(0.9)
+    c.roundRect(margin_x, y, content_w, card_h, 5, fill=1, stroke=1)
+    
+    # Top accent line
+    c.setFillColor(st['border'])
+    c.rect(margin_x + content_w - 4.0, y, 4.0, card_h, fill=1, stroke=0)
+    
+    # Header title
+    c.setFont("Vazirmatn-Bold", 8.6)
+    c.setFillColor(st['title'])
+    c.drawRightString(margin_x + content_w - 12, y + card_h - 14, fa(f"● {title_fa}"))
+    
+    # Small badge on left
+    c.setFillColor(st['border'])
+    c.roundRect(margin_x + 8, y + card_h - 17, 85, 12, 3, fill=1, stroke=0)
+    c.setFont("Vazirmatn-Bold", 6.8)
+    c.setFillColor(HexColor('#ffffff'))
+    c.drawCentredString(margin_x + 50.5, y + card_h - 13.5, fa(st['badge']))
+    
+    # Lines
+    c.setFont("Vazirmatn-Regular", 7.8)
+    c.setFillColor(HexColor('#1f2937'))
+    start_y = y + card_h - 28
+    for idx, line in enumerate(wrapped_lines):
+        c.drawRightString(margin_x + content_w - 14, start_y - idx * line_h, fa(line))
+        
+    c.restoreState()
+    return y
