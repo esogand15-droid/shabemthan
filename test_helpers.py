@@ -120,15 +120,15 @@ def draw_table_multiline(c, cur_y, headers, rows, col_widths, margin_x=34, conte
     c.restoreState()
     return y
 
-def draw_flow_diagram(c, cur_y, steps, title_fa=None, box_h=34, margin_x=34, content_w=528.8):
+def draw_flow_diagram(c, cur_y, steps, title_fa=None, box_h=35, margin_x=34, content_w=528.8):
     """
-    Renders an RTL horizontal process flow diagram.
+    Renders an RTL horizontal process flow diagram with clear wrapped text.
     """
     from test_new_components import (
         C_BRAND_DARK, C_BRAND, C_SURFACE, C_LINE, C_HIGHLIGHT, C_TEXT_BODY, fa
     )
     c.saveState()
-    y_start = cur_y - 4
+    y_start = cur_y - 3
     if title_fa:
         c.setFont("Vazirmatn-Bold", 8.2)
         c.setFillColor(C_BRAND_DARK)
@@ -136,7 +136,7 @@ def draw_flow_diagram(c, cur_y, steps, title_fa=None, box_h=34, margin_x=34, con
         y_start -= 15
         
     n = len(steps)
-    gap = 14
+    gap = 13
     total_gaps = gap * (n - 1)
     box_w = (content_w - total_gaps) / n
     box_y = y_start - box_h - 2
@@ -153,15 +153,20 @@ def draw_flow_diagram(c, cur_y, steps, title_fa=None, box_h=34, margin_x=34, con
         c.rect(x + box_w - 3.0, box_y, 3.0, box_h, fill=1, stroke=0)
         
         step_title, step_desc = steps[i]
-        c.setFont("Vazirmatn-Bold", 7.8)
+        c.setFont("Vazirmatn-Bold", 7.5)
         c.setFillColor(C_BRAND_DARK)
         tx_title = fa(step_title)
-        c.drawCentredString(x + box_w / 2.0 - 1.5, box_y + box_h - 11.5, tx_title)
+        c.drawCentredString(x + box_w / 2.0 - 1.5, box_y + box_h - 11.0, tx_title)
         
-        c.setFont("Vazirmatn-Regular", 6.8)
+        # Wrap description if needed
+        desc_lines = wrap_persian_text(step_desc, "Vazirmatn-Regular", 6.2, box_w - 8)
+        c.setFont("Vazirmatn-Regular", 6.2)
         c.setFillColor(C_TEXT_BODY)
-        tx_desc = fa(step_desc)
-        c.drawCentredString(x + box_w / 2.0 - 1.5, box_y + 8, tx_desc)
+        if len(desc_lines) == 1:
+            c.drawCentredString(x + box_w / 2.0 - 1.5, box_y + 8.5, fa(desc_lines[0]))
+        elif len(desc_lines) >= 2:
+            c.drawCentredString(x + box_w / 2.0 - 1.5, box_y + 12.0, fa(desc_lines[0]))
+            c.drawCentredString(x + box_w / 2.0 - 1.5, box_y + 4.5, fa(desc_lines[1]))
         
         if i < n - 1:
             arrow_start_x = x - 2
