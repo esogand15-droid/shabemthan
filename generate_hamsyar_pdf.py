@@ -170,7 +170,7 @@ def draw_box(c, cur_y, box_type, label, lines, extra_h=0):
 
 def draw_table(c, cur_y, headers, rows, col_widths):
     c.saveState()
-    row_h = 24.0
+    row_h = 21.0
     tbl_h = (len(rows) + 1) * row_h
     y = cur_y - 8 - tbl_h
     
