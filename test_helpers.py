@@ -12,7 +12,12 @@ def fa(text):
 
 def wrap_persian_text(text, font_name, font_size, max_width):
     """Wraps Persian text into lines that fit within max_width."""
-    words = str(text).split()
+    # Strip badge prefixes before measuring
+    clean_text = str(text)
+    for b in ['[CHECK]', '[CROSS]', '[UP]', '[DOWN]', '[EQUAL]']:
+        clean_text = clean_text.replace(b, '').strip()
+        
+    words = clean_text.split()
     if not words:
         return []
     lines = []
@@ -33,10 +38,63 @@ def wrap_persian_text(text, font_name, font_size, max_width):
         lines.append(" ".join(current_line))
     return lines
 
+def draw_cell_badge(c, cx, cy, badge_type):
+    """
+    Renders vector check/cross badges in table cells.
+    badge_type: 'CHECK', 'CROSS', 'UP', 'DOWN', 'EQUAL'
+    """
+    c.saveState()
+    r = 6.2
+    if badge_type == 'CHECK':
+        c.setFillColor(HexColor('#10b981'))
+        c.circle(cx, cy, r, fill=1, stroke=0)
+        c.setStrokeColor(HexColor('#ffffff'))
+        c.setLineWidth(1.4)
+        p = c.beginPath()
+        p.moveTo(cx - 3.2, cy - 0.2)
+        p.lineTo(cx - 0.8, cy - 2.6)
+        p.lineTo(cx + 3.4, cy + 2.8)
+        c.drawPath(p, fill=0, stroke=1)
+    elif badge_type == 'CROSS':
+        c.setFillColor(HexColor('#ef4444'))
+        c.circle(cx, cy, r, fill=1, stroke=0)
+        c.setStrokeColor(HexColor('#ffffff'))
+        c.setLineWidth(1.4)
+        p = c.beginPath()
+        p.moveTo(cx - 2.5, cy - 2.5)
+        p.lineTo(cx + 2.5, cy + 2.5)
+        p.moveTo(cx - 2.5, cy + 2.5)
+        p.lineTo(cx + 2.5, cy - 2.5)
+        c.drawPath(p, fill=0, stroke=1)
+    elif badge_type == 'UP':
+        c.setFillColor(HexColor('#dcfce7'))
+        c.setStrokeColor(HexColor('#22c55e'))
+        c.roundRect(cx - 15, cy - 6, 30, 12, 3, fill=1, stroke=1)
+        c.setFillColor(HexColor('#15803d'))
+        c.setFont("Vazirmatn-Bold", 6.8)
+        c.drawCentredString(cx, cy - 2.5, fa("افزایش ▲"))
+    elif badge_type == 'DOWN':
+        c.setFillColor(HexColor('#fee2e2'))
+        c.setStrokeColor(HexColor('#ef4444'))
+        c.roundRect(cx - 15, cy - 6, 30, 12, 3, fill=1, stroke=1)
+        c.setFillColor(HexColor('#b91c1c'))
+        c.setFont("Vazirmatn-Bold", 6.8)
+        c.drawCentredString(cx, cy - 2.5, fa("کاهش ▼"))
+    elif badge_type == 'EQUAL':
+        c.setFillColor(HexColor('#f3f4f6'))
+        c.setStrokeColor(HexColor('#9ca3af'))
+        c.roundRect(cx - 15, cy - 6, 30, 12, 3, fill=1, stroke=1)
+        c.setFillColor(HexColor('#4b5563'))
+        c.setFont("Vazirmatn-Bold", 6.8)
+        c.drawCentredString(cx, cy - 2.5, fa("ثابت ━"))
+    c.restoreState()
+
 def draw_table_multiline(c, cur_y, headers, rows, col_widths, margin_x=34, content_w=528.8, font_sz=8.0, row_h=19.0, **kwargs):
     """
-    Renders a table where rows calculate dynamic height based on multi-line wrapped Persian text.
-    Prevents text clipping or overlapping in cells!
+    Renders a table with:
+    - Smart text wrapping
+    - Vector badges for [CHECK], [CROSS], [UP], [DOWN], [EQUAL]
+    - Concise visual pills and crisp contrast
     """
     from test_new_components import C_BRAND, C_WHITE, C_SURFACE, C_BRAND_DARK, C_TEXT_BODY, C_LINE
     c.saveState()
@@ -57,10 +115,19 @@ def draw_table_multiline(c, cur_y, headers, rows, col_widths, margin_x=34, conte
         r_lines = []
         max_h = 19.0
         for c_idx, cell in enumerate(row):
+            raw_cell = str(cell)
+            badge = None
+            for b in ['[CHECK]', '[CROSS]', '[UP]', '[DOWN]', '[EQUAL]']:
+                if raw_cell.startswith(b):
+                    badge = b[1:-1]
+                    raw_cell = raw_cell[len(b):].strip()
+                    break
+            
             f_name = 'Vazirmatn-Bold' if c_idx == 0 else 'Vazirmatn-Regular'
-            lines = wrap_persian_text(cell, f_name, font_sz, col_widths[c_idx] - 10)
-            r_lines.append(lines)
-            needed = len(lines) * 10.5 + 8.0
+            avail_w = col_widths[c_idx] - (24 if badge in ['CHECK', 'CROSS'] else 10)
+            lines = wrap_persian_text(raw_cell, f_name, font_sz, avail_w)
+            r_lines.append((badge, lines))
+            needed = max(19.0, len(lines) * 10.5 + 8.0)
             if needed > max_h:
                 max_h = needed
         prepared_rows.append(r_lines)
@@ -95,20 +162,37 @@ def draw_table_multiline(c, cur_y, headers, rows, col_widths, margin_x=34, conte
             c.rect(margin_x, ry, content_w, rh, fill=1, stroke=0)
             
         cur_x = margin_x + content_w
-        for c_idx, lines in enumerate(r_lines):
+        for c_idx, (badge, lines) in enumerate(r_lines):
             w = col_widths[c_idx]
-            if c_idx == 0:
-                c.setFont('Vazirmatn-Bold', font_sz)
-                c.setFillColor(C_BRAND_DARK)
-            else:
-                c.setFont('Vazirmatn-Regular', font_sz)
-                c.setFillColor(C_TEXT_BODY)
-                
-            line_start_y = cur_row_top - 5 - font_sz
-            if len(lines) == 1:
-                line_start_y = cur_row_top - (rh - font_sz) / 2 - font_sz * 0.75
-            for l_idx, line in enumerate(lines):
-                c.drawRightString(cur_x - 5, line_start_y - l_idx * 10.5, fa(line))
+            cell_mid_y = ry + rh / 2.0
+            
+            # Badge handling
+            text_x = cur_x - 5
+            if badge in ['UP', 'DOWN', 'EQUAL'] and not lines:
+                # Standalone pill centered in cell
+                draw_cell_badge(c, cur_x - w / 2.0, cell_mid_y, badge)
+            elif badge in ['CHECK', 'CROSS']:
+                if not lines:
+                    # Standalone icon centered
+                    draw_cell_badge(c, cur_x - w / 2.0, cell_mid_y, badge)
+                else:
+                    # Icon on right side of cell, followed by short label
+                    draw_cell_badge(c, cur_x - 11, cell_mid_y, badge)
+                    text_x = cur_x - 22
+                    
+            if lines:
+                if c_idx == 0:
+                    c.setFont('Vazirmatn-Bold', font_sz)
+                    c.setFillColor(C_BRAND_DARK)
+                else:
+                    c.setFont('Vazirmatn-Regular', font_sz)
+                    c.setFillColor(C_TEXT_BODY)
+                    
+                line_start_y = cur_row_top - 5 - font_sz
+                if len(lines) == 1:
+                    line_start_y = cur_row_top - (rh - font_sz) / 2 - font_sz * 0.75
+                for l_idx, line in enumerate(lines):
+                    c.drawRightString(text_x, line_start_y - l_idx * 10.5, fa(line))
             cur_x -= w
             
         # border bottom
@@ -183,9 +267,9 @@ def draw_flow_diagram(c, cur_y, steps, title_fa=None, box_h=35, margin_x=34, con
             p.lineTo(arrow_end_x + 4.5, arrow_mid_y + 3)
             p.lineTo(arrow_end_x + 4.5, arrow_mid_y - 3)
             p.close()
-            c.drawPath(p, fill=1, stroke=0)
+            c.drawPath(p, fill=0, stroke=1)
             
     c.restoreState()
     return box_y - 8
 
-print("test_helpers.py updated with draw_table_multiline!")
+print("test_helpers.py successfully updated with vector badges and clean multiline tables!")
